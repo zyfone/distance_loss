@@ -57,3 +57,15 @@ class Geometry_loss(nn.Module):
         res = res.clone()
         res[range(len(e)), range(len(e))] = 0
         return res
+
+
+
+
+
+# RPN MASK foreground 
+mask_t = torch.sum(rpn_cls_map_t[:, 9:, :, :], dim=1)
+mask_t[mask_t > 1.0] = 1.0
+mask_t = (mask_t + 1.0) / 2
+mask_t = mask_t.unsqueeze(0).detach()
+mask_low_t = F.interpolate(mask_t, size=(low_features_t.shape[2], low_features_t.shape[3])).detach()
+mask_mid_t = F.interpolate(mask_t, size=(mid_features_t.shape[2], mid_features_t.shape[3])).detach()
